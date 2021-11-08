@@ -18,16 +18,20 @@ public:
         return key;
     }
 
-    void setKey(K *key) {
-        Entry::key = key;
+    K getKey() {
+        return *key;
+    }
+
+    void setKey(K *k) {
+        Entry::key = k;
     }
 
     V *getValue() const {
         return value;
     }
 
-    void setValue(V *value) {
-        Entry::value = value;
+    void setValue(V *v) {
+        Entry::value = v;
     }
 };
 

@@ -18,6 +18,7 @@ private:
     Node<K, V>* first;
     Node<K, V>* second;
     Node<K, V>* third;
+    Node<K, V>* fourth;
 
     Node<K, V>* parent;
 
@@ -48,20 +49,32 @@ private:
 
 public:
 
-    explicit Node(Node<K, V>* parent, Entry<K, V> entry): parent(parent) {
+    Entry<K, V> *const *getEntries() const {
+        return entries;
+    }
+
+    explicit Node(Node<K, V>* parent, Entry<int, int> *entry): parent(parent) {
         size = 1;
         entries[0] = entry;
 
         first = nullptr;
         second = nullptr;
         third = nullptr;
-    }
+        fourth = nullptr;
+    };
+
+    Node(Entry<K, V> *entry, Node<K, V> *first, Node<K, V> *second, Node<K, V> *third, Node<K, V> *fourth,
+         Node<K, V> *parent) : first(first), second(second), third(third), fourth(fourth),
+                               parent(parent) {
+        entries[0] = entry;
+        size = 1;
+    };
 
     bool isLeaf(){
         return first == nullptr && second == nullptr && third == nullptr;
     }
 
-    void addEntry(Entry<K, V> entry){
+    void addEntry(Entry<K, V> *entry){
         if (entry == nullptr)
             return;
 
@@ -82,12 +95,60 @@ public:
         return third;
     }
 
+
+    Node<K, V> *getFourth() const {
+        return fourth;
+    }
+
+    Node<K, V> *getParent() const {
+        return parent;
+    }
+
     int getSize() const {
         return size;
     }
 
     int getKey(int idx){
         return entries[idx]->getKey();
+    }
+
+    int getKeyIdx(K* key){
+        for (int i = 0; i < size; ++i) {
+            if (entries[i]->getKey() == key)
+                return i;
+        }
+
+        return -1;
+    }
+
+    void setFirst(Node<K, V> *node) {
+        Node::first = node;
+    }
+
+    void setSecond(Node<K, V> *node) {
+        Node::second = node;
+    }
+
+    void setThird(Node<K, V> *node) {
+        Node::third = node;
+    }
+
+    void setFourth(Node<K, V> *node) {
+        Node::fourth = node;
+    }
+
+    void setParent(Node<K, V> *node) {
+        Node::parent = node;
+    }
+
+    void become_node2(Entry<K, V>* entry, Node<K, V>* firstNode, Node<K, V>* secondNode){
+        entries[0] = entry;
+        this->first = firstNode;
+        this->second = secondNode;
+        third = nullptr;
+        fourth = nullptr;
+        parent = nullptr;
+        size = 1;
     }
 };
 
