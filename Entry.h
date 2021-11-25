@@ -18,9 +18,9 @@ public:
         return key;
     }
 
-    K getKey() {
-        return *key;
-    }
+//    K getKey() {
+//        return *key;
+//    }
 
     void setKey(K *k) {
         Entry::key = k;

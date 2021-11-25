@@ -80,6 +80,8 @@ public:
 
         entries[size] = entry;
 
+        size++;
+
         sortEntries();
     }
 
@@ -108,7 +110,7 @@ public:
         return size;
     }
 
-    int getKey(int idx){
+    K* getKey(int idx){
         return entries[idx]->getKey();
     }
 

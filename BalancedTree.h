@@ -114,12 +114,17 @@ public:
     }
 
     Node<K, V>* addEntry(Entry<K, V>* entry){
-        if (root == nullptr) {
-            root = new Node<K, V>(nullptr, entry);
-            return root;
-        }
+        Node<K, V>* result = insert(root, entry);
 
-        return insert(root, entry);
+        if (root == nullptr)
+            root = result;
+
+//        if (root == nullptr) {
+//            root = new Node<K, V>(nullptr, entry);
+//            return root;
+//        }
+
+        return result;
     }
 };
 
