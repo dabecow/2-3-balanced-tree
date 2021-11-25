@@ -13,7 +13,7 @@ class Node {
 private:
 
     int size;
-    Entry<K, V>* entries[3];
+    Entry<K, V>* entries[3] = {nullptr, nullptr, nullptr};
 
     Node<K, V>* first;
     Node<K, V>* second;
@@ -53,7 +53,7 @@ public:
         return entries;
     }
 
-    explicit Node(Node<K, V>* parent, Entry<int, int> *entry): parent(parent) {
+    explicit Node(Node<K, V>* parent, Entry<K, V> *entry): parent(parent) {
         size = 1;
         entries[0] = entry;
 
@@ -145,6 +145,9 @@ public:
 
     void become_node2(Entry<K, V>* entry, Node<K, V>* firstNode, Node<K, V>* secondNode){
         entries[0] = entry;
+        entries[1] = nullptr;
+        entries[2] = nullptr;
+
         this->first = firstNode;
         this->second = secondNode;
         third = nullptr;

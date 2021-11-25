@@ -58,6 +58,7 @@ public:
             right->getSecond()->setParent(right);
 
         if (node->getParent() != nullptr){
+
             Node<K, V>* parent = node->getParent();
             parent->addEntry(entries[1]);
 
@@ -82,12 +83,13 @@ public:
                 parent->setThird(left);
             }
 
+            Node<K,V>* tmp = parent;
             delete node;
-            return parent;
+            return tmp;
         } else {
             left->setParent(node);
             right->setParent(node);
-            node->become_node2(entries[0], left, right);
+            node->become_node2(entries[1], left, right);
 
             return node;
         }
@@ -97,20 +99,16 @@ public:
         if (node == nullptr)
             return nullptr;
 
-        Entry<K, V>* entries[] = node->getEntries();
+        Entry<K, V>* const* entries = node->getEntries();
 
         if (node->getKeyIdx(key) != -1)
             return node;
-        else if (key < entries[0].getKey())
+        else if (key < entries[0]->getKey())
             return getNode(node->getFirst(), key);
-        else if ((node->getSize() == 2 && key < entries[1].getKey()) || (node->getSize() == 1))
+        else if ((node->getSize() == 2 && key < entries[1]->getKey()) || (node->getSize() == 1))
             return getNode(node->getSecond(), key);
         else if (node->getSize() == 2)
             return getNode(node->getThird(), key);
-    }
-
-    Entry<K, V>* getEntry(K* key){
-
     }
 
     Node<K, V>* addEntry(Entry<K, V>* entry){
@@ -119,12 +117,24 @@ public:
         if (root == nullptr)
             root = result;
 
-//        if (root == nullptr) {
-//            root = new Node<K, V>(nullptr, entry);
-//            return root;
-//        }
-
+        size++;
         return result;
+    }
+
+    Entry<K, V>* getEntry(K* key){
+        if (root == nullptr)
+            return nullptr;
+
+        auto foundNode = getNode(root, key);
+
+        for (int i = 0; i < 3; ++i) {
+            auto entry = foundNode->getEntries()[i];
+            K* iterKey = entry->getKey();
+            if (iterKey == key)
+                return entry;
+        }
+
+        return nullptr;
     }
 };
 
