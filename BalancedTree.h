@@ -15,13 +15,6 @@ private:
     Node<K, V>* root;
     int size;
 
-public:
-
-    BalancedTree() {
-        size = 0;
-        root = nullptr;
-    }
-
     Node<K, V>* insert(Node<K, V>* node, Entry<K, V> *entry){
         if (node == nullptr)
             return new Node<K, V>(nullptr, entry);
@@ -111,6 +104,67 @@ public:
             return getNode(node->getThird(), key);
     }
 
+    Node<K, V>* getNodeWithMinKey(Node<K, V>* node){
+        if (node == nullptr)
+            return nullptr;
+
+        if (node->getFirst() == nullptr)
+            return node;
+
+        return getNodeWithMinKey(node->getFirst());
+    }
+
+    Node<K, V>* remove(Node<K, V>* _root, K* key) {
+        Node<K, V> *node = getNode(_root, key);
+
+        if (node == nullptr)
+            return nullptr;
+
+        Node<K, V>* nodeWithMinKey = node->getKey(0) == key ? getNodeWithMinKey(node->getSecond()) :
+                                     getNodeWithMinKey(node->getThird());
+
+        if (nodeWithMinKey != nullptr) {
+//            if (key == node->getEntries()[0]->getKey()){
+//
+//            }
+            Entry<K, V> entryToMove = (key == node->getEntries()[0]->getKey() ? node->getEntries()[0] : node->getEntries()[1]);
+            node->swapEntriesPointers(entryToMove, nodeWithMinKey->getEntries()[0]);
+            node = nodeWithMinKey;
+        }
+
+        node->removeEntry(key);
+        return fix(node);
+    }
+
+    Node<K, V>* fix(Node<K,V> *node){
+        if (node->getSize() == 0 && node->getParent() == nullptr){
+            delete node;
+            return nullptr;
+        }
+
+        if (node->getSize() != 0) {
+            if (node->getParent() != nullptr)
+                return fix(node->getParent());
+            else return node;
+        }
+
+//        Node<K,V>* parent = node->getParent();
+//        if (parent->getFirst()->getSize() == 2 || parent->getSecond()->getSize() == 2 || parent->getSize() == 2)
+//            node = redistribute(node);
+//        else if (parent->getSize() == 2 && parent->getThird()->getSize() == 2)
+//            node = redistribute(node);
+//        else node = merge(node);
+
+        return fix(node);
+    }
+
+public:
+
+    BalancedTree() {
+        size = 0;
+        root = nullptr;
+    }
+
     Node<K, V>* addEntry(Entry<K, V>* entry){
         Node<K, V>* result = insert(root, entry);
 
@@ -136,6 +190,14 @@ public:
 
         return nullptr;
     }
+
+    void removeEntry(K* key){
+        if (root != nullptr)
+            remove(root, key);
+
+    }
+
+
 };
 
 

@@ -22,13 +22,6 @@ private:
 
     Node<K, V>* parent;
 
-    void swapEntries(int idx1, int idx2){
-        Entry<K, V>* tmp = entries[idx1];
-
-        entries[idx1] = entries[idx2];
-        entries[idx2] = tmp;
-    }
-
     void sortEntries(){
 
         if (size < 2)
@@ -48,6 +41,19 @@ private:
     }
 
 public:
+
+    void swapEntries(int idx1, int idx2){
+        Entry<K, V>* tmp = entries[idx1];
+
+        entries[idx1] = entries[idx2];
+        entries[idx2] = tmp;
+    }
+
+    void swapEntriesPointers(Entry<K, V> &e1, Entry<K, V> &e2){
+        Entry<K, V> tmp = e1;
+        e1 = e2;
+        e2 = tmp;
+    }
 
     Entry<K, V> *const *getEntries() const {
         return entries;
@@ -83,6 +89,17 @@ public:
         size++;
 
         sortEntries();
+    }
+
+    void removeEntry(K key){
+        if (size >= 1 && entries[0]->getKey() == key) {
+            entries[0]->setKey(entries[1]->getKey());
+            entries[1]->setKey(entries[2]->getKey());
+            size--;
+        } else if (size ==2 && entries[1]->getKey() == key){
+            entries[1]->setKey(entries[2]->getKey());
+            size--;
+        }
     }
 
     Node<K, V> *getFirst() const {

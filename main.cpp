@@ -16,5 +16,8 @@ int main() {
     for (int i = 1; i <= 7; ++i) {
         std::cout << *tree->getEntry(reinterpret_cast<int *>(i))->getValue();
     }
+
+    tree->removeEntry(reinterpret_cast<int *>(1));
+
     return 0;
 }
