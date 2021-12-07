@@ -92,12 +92,12 @@ public:
     }
 
     void removeEntry(K key){
-        if (size >= 1 && entries[0]->getKey() == key) {
-            entries[0]->setKey(entries[1]->getKey());
-            entries[1]->setKey(entries[2]->getKey());
+        if (size >= 1 && *entries[0]->getKey() == key) {
+            entries[0] = entries[1];
+            entries[1] = entries[2];
             size--;
-        } else if (size ==2 && entries[1]->getKey() == key){
-            entries[1]->setKey(entries[2]->getKey());
+        } else if (size == 2 && *entries[1]->getKey() == key){
+            entries[1] = entries[2];
             size--;
         }
     }

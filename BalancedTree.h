@@ -124,17 +124,16 @@ private:
                                      getNodeWithMinKey(node->getThird());
 
         if (nodeWithMinKey != nullptr) {
-//            if (key == node->getEntries()[0]->getKey()){
-//
-//            }
-            Entry<K, V> entryToMove = (key == node->getEntries()[0]->getKey() ? node->getEntries()[0] : node->getEntries()[1]);
-            node->swapEntriesPointers(entryToMove, nodeWithMinKey->getEntries()[0]);
+
+            Entry<K, V> &entryToMove  = (key == node->getEntries()[0]->getKey() ? *node->getEntries()[0] : *node->getEntries()[1]);
+            node->swapEntriesPointers(entryToMove, *nodeWithMinKey->getEntries()[0]);
             node = nodeWithMinKey;
         }
 
-        node->removeEntry(key);
-        return fix(node);
+        node->removeEntry(*key);
+//        return fix(node);
     }
+
 
     Node<K, V>* fix(Node<K,V> *node){
         if (node->getSize() == 0 && node->getParent() == nullptr){
