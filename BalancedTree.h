@@ -96,9 +96,9 @@ private:
 
         if (node->getKeyIdx(key) != -1)
             return node;
-        else if (key < entries[0]->getKey())
+        else if (*key < *entries[0]->getKey())
             return getNode(node->getFirst(), key);
-        else if ((node->getSize() == 2 && key < entries[1]->getKey()) || (node->getSize() == 1))
+        else if ((node->getSize() == 2 && *key < *entries[1]->getKey()) || (node->getSize() == 1))
             return getNode(node->getSecond(), key);
         else if (node->getSize() == 2)
             return getNode(node->getThird(), key);
@@ -131,7 +131,6 @@ private:
         }
 
         node->removeEntry(*key);
-//        return fix(node);
     }
 
 
@@ -178,12 +177,15 @@ public:
         if (root == nullptr)
             return nullptr;
 
-        auto foundNode = getNode(root, key);
+        auto foundNode = getNode(root, key); //returns null
+
+        if (foundNode == nullptr)
+            return nullptr;
 
         for (int i = 0; i < 3; ++i) {
             auto entry = foundNode->getEntries()[i];
             K* iterKey = entry->getKey();
-            if (iterKey == key)
+            if (*iterKey == *key)
                 return entry;
         }
 

@@ -133,7 +133,7 @@ public:
 
     int getKeyIdx(K* key){
         for (int i = 0; i < size; ++i) {
-            if (entries[i]->getKey() == key)
+            if (*entries[i]->getKey() == *key)
                 return i;
         }
 

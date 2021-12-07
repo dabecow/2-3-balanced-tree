@@ -18,6 +18,10 @@ public:
         return key;
     }
 
+    K getKeyValue() {
+        return *key;
+    }
+
 //    K getKey() {
 //        return *key;
 //    }
