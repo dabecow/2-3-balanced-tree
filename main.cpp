@@ -11,13 +11,6 @@ int main() {
     for (int i = 0; i < 7; ++i) {
         tree->addEntry(new Entry<int, std::string>(&intValues[i], &stringValues[i]));
     }
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(1), new std::string("Hello")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(2), new std::string(", ")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(3), new std::string("World")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(4), new std::string("!")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(5), new std::string("")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(6), new std::string("")));
-//    tree->addEntry(new Entry<int, std::string>(reinterpret_cast<int *>(7), new std::string("")));
 
     for (int i = 1; i <= 7; ++i) {
         std::cout << *tree->getEntry(&i)->getValue();
@@ -29,10 +22,12 @@ int main() {
 
     Entry<int, std::string>* iterEntry;
 
+    std::cout << "\n\nAfter removing the first element which is " << stringValues[0] << ":\n\n";
+
     for (int i = 1; i <= 7; ++i) {
         iterEntry = tree->getEntry(&i);
         if (iterEntry != nullptr)
-            std::cout << iterEntry->getValue();
+            std::cout << *iterEntry->getValue();
     }
 
     return 0;

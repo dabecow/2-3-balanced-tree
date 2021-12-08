@@ -55,6 +55,10 @@ public:
         e2 = tmp;
     }
 
+    void setEntryAtIdx(Entry<K, V>* entry, int idx){
+        entries[idx] = entry;
+    }
+
     Entry<K, V> *const *getEntries() const {
         return entries;
     }

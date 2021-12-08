@@ -15,6 +15,9 @@ public:
     Entry(K *key, V *value) : key(key), value(value) {}
 
     K *getKey() const {
+        if (key == nullptr)
+            return nullptr;
+
         return key;
     }
 

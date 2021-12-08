@@ -131,30 +131,309 @@ private:
         }
 
         node->removeEntry(*key);
+        return fix(node);
     }
 
 
     Node<K, V>* fix(Node<K,V> *node){
+        // удаляли из корня единственный элемент
         if (node->getSize() == 0 && node->getParent() == nullptr){
             delete node;
             return nullptr;
         }
 
+        // удаляли у листа с родителем одно из значений
         if (node->getSize() != 0) {
             if (node->getParent() != nullptr)
                 return fix(node->getParent());
             else return node;
         }
 
-//        Node<K,V>* parent = node->getParent();
-//        if (parent->getFirst()->getSize() == 2 || parent->getSecond()->getSize() == 2 || parent->getSize() == 2)
-//            node = redistribute(node);
-//        else if (parent->getSize() == 2 && parent->getThird()->getSize() == 2)
-//            node = redistribute(node);
-//        else node = merge(node);
+        Node<K,V>* parent = node->getParent();
+        if (parent->getFirst()->getSize() == 2 || parent->getSecond()->getSize() == 2 || parent->getSize() == 2)
+            node = redistribute(node);
+        else if (parent->getSize() == 2 && parent->getThird()->getSize() == 2)
+            node = redistribute(node);
+        else node = merge(node);
 
         return fix(node);
     }
+
+    Node<K, V>* redistribute(Node<K, V>* node){
+        auto parent = node->getParent();
+        auto first = parent->getFirst();
+        auto second = parent->getSecond();
+        auto third = parent->getThird();
+
+        if (parent->getSize() == 2 && first->getSize() < 2 && second->getSize() < 2 && third->getSize() < 2) {
+
+            if (first == node) {
+                parent->setFirst(parent->getSecond());
+                parent->setSecond(parent->getThird());
+                parent->setThird(nullptr);
+
+                parent->getFirst()->addEntry(parent->getEntries()[0]);
+                parent->getFirst()->setThird(parent->getFirst()->getSecond());
+                parent->getFirst()->setSecond(parent->getFirst()->getFirst());
+
+                if (node->getFirst() != nullptr)
+                    parent->getFirst()->setFirst(node->getFirst());
+                else if (node->getSecond() != nullptr)
+                    parent->getFirst()->setFirst(node->getSecond());
+
+                if (parent->getFirst()->getFirst() != nullptr)
+                    parent->getFirst()->getFirst()->setParent(parent->getFirst());
+
+                parent->removeEntry(*parent->getEntries()[0]->getKey());
+                delete first;
+
+            } else if (second == node) {
+                first->addEntry(parent->getEntries()[0]);
+                parent->removeEntry(*parent->getEntries()[0]->getKey());
+
+                if (node->getFirst() != nullptr)
+                    first->setThird(node->getFirst());
+                else if (node->getSecond() != nullptr)
+                    first->setThird(node->getSecond());
+
+                if (first->getThird() != nullptr)
+                    first->getThird()->setParent(first);
+
+                parent->setSecond(parent->getThird());
+                parent->setThird(nullptr);
+
+                delete second;
+            } else if (third == node) {
+                second->addEntry(parent->getEntries()[1]);
+                parent->setThird(nullptr);
+                parent->removeEntry(*parent->getEntries()[1]->getKey());
+
+                if (node->getFirst() != nullptr)
+                    second->setThird(node->getFirst());
+                else if (node->getSecond() != nullptr)
+                    second->setThird(node->getSecond());
+
+                if (second->getThird() != nullptr)
+                    second->getThird()->setParent(second);
+
+                delete third;
+            }
+
+        } else if (parent->getSize() == 2 && (first->getSize() == 2 || second->getSize() == 2 || third->getSize() == 2)) {
+
+            if (third == node) {
+                if (node->getFirst() != nullptr){
+                    node->setSecond(node->getFirst());
+                    node->setFirst(nullptr);
+                }
+
+                node->addEntry(parent->getEntries()[1]);
+
+                if (second->getSize() == 2) {
+                    parent->setEntryAtIdx(second->getEntries()[1], 1);
+                    second->removeEntry(*second->getEntries()[1]->getKey());
+                    node->setFirst(second->getThird());
+                    second->setThird(nullptr);
+
+                    if (node->getFirst() != nullptr)
+                        node->getFirst()->setParent(node);
+
+                } else if (first->getSize() == 2) {
+                    parent->setEntryAtIdx(second->getEntries()[0], 1);
+
+                    node->setFirst(second->getSecond());
+                    second->setSecond(second->getFirst());
+
+                    if (node->getFirst() != nullptr)
+                        node->getFirst()->setParent(node);
+
+                    second->setEntryAtIdx(parent->getEntries()[0], 0);
+                    parent->setEntryAtIdx(first->getEntries()[1], 0);
+                    first->removeEntry(*first->getEntries()[1]->getKey());
+                    second->setFirst(first->getThird());
+
+                    if (second->getFirst() != nullptr)
+                        second->getFirst()->setParent(second);
+
+                    first->setThird(nullptr);
+                }
+            } else if (second == node) {
+
+                if (third->getSize() == 2) {
+
+                    if (node->getFirst() == nullptr) {
+                        node->setFirst(node->getSecond());
+                        node->setSecond(nullptr);
+                    }
+
+                    second->addEntry(parent->getEntries()[1]);
+                    parent->setEntryAtIdx(third->getEntries()[0], 1);
+                    third->removeEntry(*third->getEntries()[0]->getKey());
+                    second->setSecond(third->getFirst());
+
+                    if (second->getSecond() != nullptr)
+                        second->getSecond()->setParent(second);
+
+                    third->setFirst(third->getSecond());
+                    third->setSecond(third->getThird());
+                    third->setThird(nullptr);
+
+                } else if (first->getSize() == 2){
+
+                    if (node->getSecond() == nullptr){
+                        node->setSecond(node->getFirst());
+                        node->setFirst(nullptr);
+                    }
+
+                    second->addEntry(parent->getEntries()[0]);
+                    parent->setEntryAtIdx(first->getEntries()[1], 0);
+
+                    first->removeEntry(*first->getEntries()[1]->getKey());
+                    second->setFirst(first->getThird());
+                    if (second->getFirst() != nullptr)
+                        second->getFirst()->setParent(second);
+
+                    first->setThird(nullptr);
+                }
+            } else if (first == node) {
+
+                if (node->getFirst() == nullptr){
+                    node->setFirst(node->getSecond());
+                    node->setSecond(nullptr);
+                }
+
+                first->addEntry(parent->getEntries()[0]);
+                if (second->getSize() == 2){
+                    parent->setEntryAtIdx(second->getEntries()[0], 0);
+
+                    second->removeEntry(*second->getEntries()[0]->getKey());
+
+                    first->setSecond(second->getFirst());
+                    if (first->getSecond() != nullptr)
+                        first->getSecond()->setParent(first);
+
+                    second->setFirst(second->getSecond());
+                    second->setSecond(second->getThird());
+                    second->setThird(nullptr);
+                } else if (third->getSize() == 2) {
+                    parent->setEntryAtIdx(second->getEntries()[0], 0);
+                    second->setEntryAtIdx(parent->getEntries()[1], 0);
+                    parent->setEntryAtIdx(third->getEntries()[0], 1);
+
+                    third->removeEntry(*third->getEntries()[0]->getKey());
+                    first->setSecond(second->getFirst());
+
+                    if (first->getSecond() != nullptr)
+                        first->getSecond()->setParent(first);
+
+                    second->setFirst(second->getSecond());
+                    second->setSecond(third->getFirst());
+
+                    if (second->getSecond() != nullptr)
+                        second->getSecond()->setParent(second);
+
+                    third->setFirst(third->getSecond());
+                    third->setSecond(third->getThird());
+                    third->setThird(nullptr);
+                }
+
+            }
+        } else if (parent->getSize() == 1) { //у parent 1 элемент, перемещаем его в листовой нод
+            node->addEntry(parent->getEntries()[0]);
+
+            if (first == node && second->getSize() == 2) { //наша нода - левая у ее родителя, а у средней 2 значения
+                parent->setEntryAtIdx(second->getEntries()[0], 0); //берем первое значение из правого поддерева
+                second->removeEntry(*second->getKey(0));
+
+                if (node->getFirst() == nullptr)            //дорабатываем значения ноды и значения его среднего поддерева
+                    node->setFirst(node->getSecond());      //для соответствия алгоритму: если не осталось левого поддерева,
+                                                            //им становится среднее, а средним становится левое поддерево этого прошлого "среднего"
+                node->setSecond(second->getFirst());        //     2                3
+                second->setFirst(second->getSecond());      //  _     3,4  ->   2       4
+                second->setSecond(second->getThird());
+                second->setThird(nullptr);
+
+                if (node->getSecond() != nullptr)
+                    node->getSecond()->setParent(node);
+
+            } else if (second == node && first->getSize() == 2) { //наша нода - средняя, а у левого поддерева родителя 2 элемента
+                parent->setEntryAtIdx(first->getEntries()[1], 0);
+                first->removeEntry(*first->getKey(1));
+
+                if (node->getSecond() == nullptr)
+                    node->setSecond(node->getFirst());
+
+                node->setFirst(first->getThird());
+                first->setThird(nullptr);
+
+                if (node->getFirst() != nullptr)
+                    node->getFirst()->setParent(node);
+            }
+        }
+
+        return parent;
+    }
+
+    Node<K, V>* merge(Node<K, V>* node){
+        auto parent = node->getParent();
+
+        if (parent->getFirst() == node) {
+
+            parent->getSecond()->addEntry(parent->getEntries()[0]);
+            parent->getSecond()->setThird(parent->getSecond()->getSecond());
+            parent->getSecond()->setSecond(parent->getSecond()->getFirst());
+
+            if (node->getFirst() != nullptr)
+                parent->getSecond()->setFirst(node->getFirst());
+            else if (node->getSecond() != nullptr)
+                parent->getSecond()->setFirst(node->getSecond());
+
+            if (parent->getSecond()->getFirst() != nullptr)
+                parent->getSecond()->getFirst()->setParent(parent->getSecond());
+
+            parent->removeEntry(*parent->getEntries()[0]->getKey());
+
+            delete parent->getFirst();
+            parent->setFirst(nullptr);
+
+        } else if (parent->getSecond() == node) {
+
+            parent->getFirst()->addEntry(parent->getEntries()[0]);
+
+            if (node->getFirst() != nullptr)
+                parent->getFirst()->setThird(node->getFirst());
+            else if (node->getSecond() != nullptr)
+                parent->getFirst()->setThird(node->getSecond());
+
+            if (parent->getFirst()->getThird() != nullptr)
+                parent->getFirst()->getThird()->setParent(parent->getFirst());
+
+            parent->removeEntry(*parent->getEntries()[0]->getKey());
+
+            delete parent->getSecond();
+            parent->setSecond(nullptr);
+        }
+
+        if (parent->getParent() == nullptr) {
+            Node<K, V> *tmp = nullptr;
+
+            if (parent->getFirst() != nullptr)
+                tmp = parent->getFirst();
+            else
+                tmp = parent->getSecond();
+
+            tmp->setParent(nullptr);
+
+            if (root == parent)
+                root = tmp;
+
+            delete parent;
+            return tmp;
+        }
+
+        return parent;
+    }
+
 
 public:
 
