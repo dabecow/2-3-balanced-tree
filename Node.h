@@ -78,6 +78,11 @@ public:
                                parent(parent) {
         entries[0] = entry;
         size = 1;
+
+        if (first != nullptr)
+            first->setParent(this);
+        if (second != nullptr)
+        second->setParent(this);
     };
 
     bool isLeaf(){
@@ -164,7 +169,7 @@ public:
         Node::parent = node;
     }
 
-    void become_node2(Entry<K, V>* entry, Node<K, V>* firstNode, Node<K, V>* secondNode){
+    void becomeNodeOf2(Entry<K, V>* entry, Node<K, V>* firstNode, Node<K, V>* secondNode){
         entries[0] = entry;
         entries[1] = nullptr;
         entries[2] = nullptr;

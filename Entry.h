@@ -12,6 +12,12 @@ private:
     V* value;
 
 public:
+
+    Entry(){
+        key = nullptr;
+        value = nullptr;
+    };
+
     Entry(K *key, V *value) : key(key), value(value) {}
 
     K *getKey() const {

@@ -3,4 +3,4 @@ project(tree)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(tree main.cpp Node.h Entry.h BalancedTree.h)
+add_executable(tree main.cpp Node.h Entry.h BalancedTree.h TestService.h Test.h)
