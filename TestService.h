@@ -14,27 +14,25 @@ class TestService {
 private:
     BalancedTree<int, std::string> *tree;
     Entry<int, std::string> *entries;
+    int* keyValues;
 
 public:
-    void insertElements(int numberOfElements){
-        tree = new BalancedTree<int, std::string>();
 
-        entries = new Entry<int, std::string>[numberOfElements]();
-
-        for (int i = 0; i < numberOfElements; ++i) {
-            entries[i].setKey(&i);
-            entries[i].setValue(new std::string(""));
-            tree->addEntry(&entries[i]);
-        }
+    void insertElement(int key){
+        tree->addEntry(new Entry<int, std::string>(&key, new std::string("")));
     }
 
     void initTree(int numberOfElements){
         tree = new BalancedTree<int, std::string>();
 
         entries = new Entry<int, std::string>[numberOfElements]();
+        keyValues = new int[numberOfElements];
 
+        int keyValue = 0;
         for (int i = 0; i < numberOfElements; ++i) {
-            entries[i].setKey(&i);
+            keyValues[i] = keyValue++;
+
+            entries[i].setKey(&keyValues[i]);
             entries[i].setValue(new std::string(""));
             tree->addEntry(&entries[i]);
         }
@@ -50,8 +48,18 @@ public:
     }
 
     void removeElement(int key){
-        tree->removeEntry(&key);
+        int* pKey = &key;
+        tree->removeEntry(pKey);
     }
+
+    BalancedTree<int, std::string> *getTree() const {
+        return tree;
+    }
+
+    Entry<int, std::string> *getEntries() const {
+        return entries;
+    }
+
 };
 
 

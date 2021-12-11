@@ -4,13 +4,14 @@
 
 #ifndef TREE_TEST_H
 #define TREE_TEST_H
-#define NUMBER_OF_TESTS 10
-#define NUMBER_OF_ELEMENTS 10000
+#define NUMBER_OF_TESTS 100
+#define NUMBER_OF_ELEMENTS 100000
 
 #include "TestService.h"
 #include <chrono>
 
 void testInserting(){
+
 
     auto testServices = new TestService[NUMBER_OF_TESTS];
 
@@ -18,15 +19,13 @@ void testInserting(){
         int numberOfElements = NUMBER_OF_ELEMENTS / NUMBER_OF_TESTS * i;
         testServices[i].initTree(numberOfElements);
 
-        using milli = std::chrono::milliseconds;
+        using nano = std::chrono::nanoseconds;
         auto start = std::chrono::high_resolution_clock::now();
 
-        testServices[i].insertElements(numberOfElements);
+        testServices[i].insertElement(NUMBER_OF_ELEMENTS);
 
         auto finish = std::chrono::high_resolution_clock::now();
-        std::cout << "Inserting " << numberOfElements << " elements took: "
-                  << std::chrono::duration_cast<milli>(finish - start).count()
-                  << " milliseconds\n";
+        std::cout << numberOfElements << ":" << std::chrono::duration_cast<nano>(finish - start).count() << std::endl;
         testServices[i].removeTree();
     }
 }
@@ -38,18 +37,13 @@ void testSearching(){
         int numberOfElements = NUMBER_OF_ELEMENTS / NUMBER_OF_TESTS * i;
         testServices[i].initTree(numberOfElements);
 
-        using milli = std::chrono::milliseconds;
+        using nano = std::chrono::nanoseconds;
         auto start = std::chrono::high_resolution_clock::now();
 
-        for (int j = 0; j < numberOfElements; ++j) {
-            testServices[i].searchElement(i);
-        }
+        testServices[i].searchElement(0);
 
         auto finish = std::chrono::high_resolution_clock::now();
-
-        std::cout << "Searching every element in tree with size " << numberOfElements << " took "
-                  << std::chrono::duration_cast<milli>(finish - start).count()
-                  << " milliseconds\n";
+        std::cout << numberOfElements << ":" << std::chrono::duration_cast<nano>(finish - start).count() << std::endl;
         testServices[i].removeTree();
     }
 }
@@ -61,18 +55,13 @@ void testRemoving(){
         int numberOfElements = NUMBER_OF_ELEMENTS / NUMBER_OF_TESTS * i;
         testServices[i].initTree(numberOfElements);
 
-        using milli = std::chrono::milliseconds;
+        using nano = std::chrono::nanoseconds;
         auto start = std::chrono::high_resolution_clock::now();
 
-        for (int j = numberOfElements / 4; j < numberOfElements * 0.75; ++j) {
-            testServices[i].removeElement(i);
-        }
+        testServices[i].removeElement(1);
 
         auto finish = std::chrono::high_resolution_clock::now();
-
-        std::cout << "Removing every element in tree with size " << numberOfElements << " took "
-                  << std::chrono::duration_cast<milli>(finish - start).count()
-                  << " milliseconds\n";
+        std::cout << numberOfElements << ":" << std::chrono::duration_cast<nano>(finish - start).count() << std::endl;
         testServices[i].removeTree();
     }
 }

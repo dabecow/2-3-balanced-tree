@@ -31,8 +31,8 @@ int main() {
 //            std::cout << *iterEntry->getValue();
 //    }
 
-    testInserting();
+//    testInserting();
 //    testSearching();
-//    testRemoving();
+    testRemoving();
     return 0;
 }

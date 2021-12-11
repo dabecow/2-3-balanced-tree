@@ -32,7 +32,7 @@ public:
         if (root == nullptr)
             return nullptr;
 
-        auto foundNode = getNode(root, key); //returns null
+        auto foundNode = getNode(root, key);
 
         if (foundNode == nullptr)
             return nullptr;
