@@ -34,5 +34,6 @@ int main() {
 //    testInserting();
 //    testSearching();
     testRemoving();
+//    addSomeValuesAndPrintTree(10);
     return 0;
 }

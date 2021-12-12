@@ -40,7 +40,7 @@ void testSearching(){
         using nano = std::chrono::nanoseconds;
         auto start = std::chrono::high_resolution_clock::now();
 
-        testServices[i].searchElement(0);
+        testServices[i].searchAndPrintElement(0);
 
         auto finish = std::chrono::high_resolution_clock::now();
         std::cout << numberOfElements << ":" << std::chrono::duration_cast<nano>(finish - start).count() << std::endl;
@@ -64,6 +64,14 @@ void testRemoving(){
         std::cout << numberOfElements << ":" << std::chrono::duration_cast<nano>(finish - start).count() << std::endl;
         testServices[i].removeTree();
     }
+}
+
+void addSomeValuesAndPrintTree(int numberOfValues){
+    auto testService = new TestService();
+    testService->initTree(numberOfValues);
+
+    testService->printTree();
+    testService->removeTree();
 }
 
 #endif //TREE_TEST_H

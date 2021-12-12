@@ -18,6 +18,10 @@ public:
         root = nullptr;
     }
 
+    Node<K, V> *getRoot() const {
+        return root;
+    }
+
     Node<K, V>* addEntry(Entry<K, V>* entry){
         Node<K, V>* result = insert(root, entry);
 
@@ -414,21 +418,21 @@ private:
 
     Node<K, V>* redistribute(Node<K, V>* node){
         auto parent = node->getParent();
-        auto first = parent->getFirst();
-        auto second = parent->getSecond();
-        auto third = parent->getThird();
+        auto parentFirst = parent->getFirst();
+        auto parentSecond = parent->getSecond();
+        auto parentThird = parent->getThird();
 
-        if (parent->getSize() == 2 && first->getSize() < 2 && second->getSize() < 2 && third->getSize() < 2) {
+        if (parent->getSize() == 2 && parentFirst->getSize() < 2 && parentSecond->getSize() < 2 && parentThird->getSize() < 2) {
 
-            redistributeParentSize2LeavesSizeBelow2(node, parent, first, second, third);
+            redistributeParentSize2LeavesSizeBelow2(node, parent, parentFirst, parentSecond, parentThird);
 
-        } else if (parent->getSize() == 2 && (first->getSize() == 2 || second->getSize() == 2 || third->getSize() == 2)) {
+        } else if (parent->getSize() == 2 && (parentFirst->getSize() == 2 || parentSecond->getSize() == 2 || parentThird->getSize() == 2)) {
 
-            redistributeParentSize2LeavesSize2(node, parent, first, second, third);
+            redistributeParentSize2LeavesSize2(node, parent, parentFirst, parentSecond, parentThird);
 
         } else if (parent->getSize() == 1) { //у parent 1 элемент, перемещаем его в листовой нод
 
-            redistributeParentSize1(node, parent, first, second);
+            redistributeParentSize1(node, parent, parentFirst, parentSecond);
 
         }
 
